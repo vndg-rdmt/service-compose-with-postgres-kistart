@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  # [SERVICES . . .]
+  postgres_db:
+    container_name: ${POSTGRES_DB_CONTAINER_NAME}
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${POSTGRES_DB_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_DB_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB_DATABASE}
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - ${POSTGRES_DB_STORAGE}:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    ports:
+      - "${DB_PORT_INT}:${DB_PORT_EXP}"
+    networks:
+      - ${SERVICE_NETWORK}
+    restart: unless-stopped
+    # healthcheck:
+    #   test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_DB_USER} -d ${POSTGRES_DB_PASSWORD}"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+    #   start_period: 10s
+
+networks:
+  # [NETWORKS SECTION . . .]
